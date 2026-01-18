@@ -37,6 +37,7 @@ function RentRoll() {
               <select
                 name="property"
                 id="property"
+                aria-label="Property Filter"
                 className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
                 value={selectedProperty}
                 onChange={(event) => setSelectedProperty(event.target.value)}
@@ -56,6 +57,7 @@ function RentRoll() {
               <select
                 name="occupancy"
                 id="occupancy"
+                aria-label="Occupancy Filter"
                 className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
                 value={selectedOccupancy}
                 onChange={(event) => setSelectedOccupancy(event.target.value)}
@@ -73,6 +75,7 @@ function RentRoll() {
                 type="text"
                 name="search"
                 id="search"
+                aria-label="Rent Roll Search"
                 className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}

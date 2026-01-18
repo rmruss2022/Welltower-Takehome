@@ -224,6 +224,7 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
           return next
         }
 
+        // Insert new row into the rent roll if date is great then the last date in rent roll
         const base = prev.find((row) => row.propertyName === propertyName && row.unitNumber === unitNumber)
         const updated: RentRollRow = {
           ...(base ?? {
@@ -276,6 +277,7 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
           return next
         }
 
+        // Add new record to rent roll with vacant unit details
         const base = prev.find((row) => row.propertyName === propertyName && row.unitNumber === unitNumber)
         if (!base) {
           return next
@@ -302,7 +304,6 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
     return rentRoll.filter((row) => row.date >= startDateRange && row.date <= endDateRange)
   }, [rentRoll, startDateRange, endDateRange])
 
-  console.log('kpi rent roll', kpiRentRoll)
 
   const kpis = useMemo<CommunityKpi[]>(() => {
     if (!startDateRange || !endDateRange) {
@@ -310,6 +311,7 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
     }
     const startRows = kpiRentRoll.filter((row) => row.date === startDateRange)
     const endRows = kpiRentRoll.filter((row) => row.date === endDateRange)
+    const datesInRange = Array.from(new Set(kpiRentRoll.map((row) => row.date))).sort()
 
     const byProperty = new Map<
       string,
@@ -331,7 +333,8 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
     addRows(startRows, 'startRows')
     addRows(endRows, 'endRows')
 
-    const toResidentKey = (row: RentRollRow) => row.residentId || row.residentName
+    const toResidentKey = (row: RentRollRow) => row.residentId || row.residentName || ''
+    const isOccupied = (row: RentRollRow) => Boolean(row.residentName?.trim())
 
     return Array.from(byProperty.entries()).map(([name, { startRows, endRows }]) => {
       const endOccupied = endRows.filter((row) => row.residentName?.trim())
@@ -345,25 +348,53 @@ function RentRollProvider({ children }: { children: React.ReactNode }) {
           }, 0) / endOccupied.length
       const occupancy = totalUnits === 0 ? 0 : endOccupied.length / totalUnits
 
-      const startResidents = new Set(
-        startRows.map(toResidentKey).filter((value) => value && String(value).trim())
-      )
-      const endResidents = new Set(
-        endRows.map(toResidentKey).filter((value) => value && String(value).trim())
-      )
+      const unitsByDate = new Map<string, Map<string, Map<string, RentRollRow>>>()
+      kpiRentRoll.forEach((row) => {
+        if (row.propertyName !== name) {
+          return
+        }
+        const unitKey = row.unitNumber
+        const propertyUnits = unitsByDate.get(name) ?? new Map()
+        const dateMap = propertyUnits.get(unitKey) ?? new Map()
+        dateMap.set(row.date, row)
+        propertyUnits.set(unitKey, dateMap)
+        unitsByDate.set(name, propertyUnits)
+      })
 
       let moveIns = 0
       let moveOuts = 0
-      endResidents.forEach((resident) => {
-        if (!startResidents.has(resident)) {
-          moveIns += 1
-        }
-      })
-      startResidents.forEach((resident) => {
-        if (!endResidents.has(resident)) {
-          moveOuts += 1
-        }
-      })
+
+      const propertyUnits = unitsByDate.get(name)
+      if (propertyUnits) {
+        propertyUnits.forEach((dateMap) => {
+          let prevRow: RentRollRow | null = null
+          datesInRange.forEach((date) => {
+            const row = dateMap.get(date)
+            if (!row) {
+              return
+            }
+            if (!prevRow) {
+              prevRow = row
+              return
+            }
+            const prevOccupied = isOccupied(prevRow)
+            const nextOccupied = isOccupied(row)
+            const prevResident = toResidentKey(prevRow)
+            const nextResident = toResidentKey(row)
+
+            if (!prevOccupied && nextOccupied) {
+              moveIns += 1
+            } else if (prevOccupied && !nextOccupied) {
+              moveOuts += 1
+            } else if (prevOccupied && nextOccupied && prevResident && nextResident && prevResident !== nextResident) {
+              moveOuts += 1
+              moveIns += 1
+            }
+
+            prevRow = row
+          })
+        })
+      }
 
       return {
         name,

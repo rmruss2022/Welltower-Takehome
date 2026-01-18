@@ -28,10 +28,15 @@ function PortfolioKpis() {
     <div className='flex flex-col gap-4'>
 
       {/* title container */}
-      <div className='flex items-start justify-between self-start w-full'>
+      <div className='flex w-full items-start justify-between gap-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
 
         {/* title */}
-        <h1 className='text-xl font-semibold'>Portfolio KPI's</h1>
+        <div className='text-left'>
+          <h1 className='text-xl font-semibold'>Portfolio KPI's</h1>
+
+          <p className='text-sm text-gray-600'>View all transactions for the portfolio</p>
+
+        </div>
 
         {/* date range selector */}
         <div className='flex gap-4'>
@@ -42,6 +47,7 @@ function PortfolioKpis() {
               type="date"
               name="range-start"
               id="range-start"
+              aria-label="Range Start"
               value={startDateRange}
               onChange={(event) => setStartDateRange(event.target.value)}
               className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
@@ -55,6 +61,7 @@ function PortfolioKpis() {
               type="date"
               name="range-end"
               id="range-end"
+              aria-label="Range End"
               value={endDateRange}
               onChange={(event) => setEndDateRange(event.target.value)}
               className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
@@ -70,7 +77,11 @@ function PortfolioKpis() {
 
 
         {kpis.map((kpi) => (
-          <div className='rounded-lg border border-gray-200 bg-white p-5 text-left shadow-sm'>
+          <div
+            key={kpi.name}
+            className='rounded-lg border border-gray-200 bg-white p-5 text-left shadow-sm'
+            data-testid={`kpi-card-${kpi.name.replace(/\s+/g, "-")}`}
+          >
             <div className='flex items-start justify-between'>
               <h1 className='text-base font-semibold text-gray-900'>{kpi.name}</h1>
               <span className='text-xs text-gray-500'>{rangeDays} days</span>

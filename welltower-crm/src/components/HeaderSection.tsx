@@ -19,6 +19,7 @@ function HeaderSection() {
           type="date"
           name="date"
           id="date"
+          aria-label="Snapshot Date"
           value={snapshotDate}
           onChange={(event) => setSnapshotDate(event.target.value)}
           className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'

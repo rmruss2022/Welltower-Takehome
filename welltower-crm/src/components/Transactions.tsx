@@ -42,9 +42,9 @@ function Transactions() {
     <div className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm'>
 
       {/* title container */}
-      <div className='mb-4'>
-        <h1 className='text-lg font-semibold'>Transactions</h1>
-        <p className='text-sm text-gray-600'>View all transactions for the portfolio</p>
+      <div className='mb-4 text-left'>
+        <h1 className='text-xl font-semibold'>Transactions</h1>
+        <p className='text-sm text-gray-600'>Apply move in & out actions to the rent roll</p>
       </div>
 
       {/* actions container */}
@@ -57,6 +57,7 @@ function Transactions() {
           <select
             name="move-in-unit"
             id="move-in-unit"
+            aria-label="Move In Unit"
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
             value={moveInUnit}
             onChange={(event) => setMoveInUnit(event.target.value)}
@@ -73,6 +74,7 @@ function Transactions() {
             type="text"
             name="resident-name"
             id="resident-name"
+            aria-label="Resident Name"
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
             value={residentName}
             onChange={(event) => setResidentName(event.target.value)}
@@ -82,6 +84,7 @@ function Transactions() {
             type="date"
             name="move-in-date"
             id="move-in-date"
+            aria-label="Move In Date"
             value={moveInDate}
             onChange={(event) => setMoveInDate(event.target.value)}
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
@@ -91,6 +94,7 @@ function Transactions() {
             type="number"
             name="rent"
             id="rent"
+            aria-label="Rent"
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
             value={rent}
             onChange={(event) => setRent(event.target.value)}
@@ -111,6 +115,7 @@ function Transactions() {
           <select
             name="move-out-unit"
             id="move-out-unit"
+            aria-label="Move Out Unit"
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
             value={moveOutUnit}
             onChange={(event) => setMoveOutUnit(event.target.value)}
@@ -127,6 +132,7 @@ function Transactions() {
             type="date"
             name="move-out-date"
             id="move-out-date"
+            aria-label="Move Out Date"
             value={moveOutDate}
             onChange={(event) => setMoveOutDate(event.target.value)}
             className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm'
